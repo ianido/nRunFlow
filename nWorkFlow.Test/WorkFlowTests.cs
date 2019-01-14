@@ -229,13 +229,6 @@ namespace nWorkFlow.Test
         public void TestSimpleFork()
         {
 
-            var groceryList = new TupleList<Func<bool>, Action<WorkFlowStep>>
-            {
-                { () => true, (a) => { }},
-                { () => true, (a) => { }}
-            };
-
-
             var eng = new WorkFlowEngine();
             countGood = 0; countBad = 0;
             eng.Start((a) =>
