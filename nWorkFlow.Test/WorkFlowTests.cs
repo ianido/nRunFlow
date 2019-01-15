@@ -30,20 +30,22 @@ namespace nWorkFlow.Test
             var eng = new WorkFlowEngine();
             countGood = 0; countBad = 0;
 
-            var w = eng.Start(a => GoodStep(a))
+            eng.Start(a => GoodStep(a))
                 .ContinueWith(a => GoodStep(a))
-                .ContinueWith(a => GoodStep(a));
+                .ContinueWith(a => GoodStep(a))
+                .ContinueWith(a =>
+                {
+                    GoodStep(a);
+                    eng.Start(b => GoodStep(b))
+                        .IfSuccess(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b));
 
-            Append(w, eng);
-                
+                    eng.Start(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b));
 
-            Assert.AreEqual(countGood, eng.Steps.Count);
-            Assert.IsTrue(eng.AllWasGood());
-        }
-
-        private void Append(WorkFlow w, WorkFlowEngine eng)
-        {
-            w.ContinueWith(InnerFunction(eng))
+                    eng.Start(b => GoodStep(b))
+                        .IfSuccess(b => GoodStep(b));
+                })
                 .ContinueWith(a =>
                 {
                     GoodStep(a);
@@ -63,23 +65,9 @@ namespace nWorkFlow.Test
                         .ContinueWith(b => GoodStep(b))
                         .ContinueWith(b => GoodStep(b));
                 });
-        }
 
-        private Action<WorkFlowStep> InnerFunction(WorkFlowEngine eng)
-        {
-            return a =>
-            {
-                GoodStep(a);
-                eng.Start(b => GoodStep(b))
-                    .IfSuccess(b => GoodStep(b))
-                    .ContinueWith(b => GoodStep(b));
-
-                eng.Start(b => GoodStep(b))
-                    .ContinueWith(b => GoodStep(b));
-
-                eng.Start(b => GoodStep(b))
-                    .IfSuccess(b => GoodStep(b));
-            };
+            Assert.AreEqual(countGood, eng.Steps.Count);
+            Assert.IsTrue(eng.AllWasGood());
         }
 
         [TestMethod]
