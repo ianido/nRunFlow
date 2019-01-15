@@ -41,8 +41,6 @@ namespace Workflow
     public class WorkFlowStep
     {
         public string Id { get; set; }
-        public Func<WorkFlowStep, WorkFlowStepResultValues> func { get; set; }
-        public Action<WorkFlowStep> act { get; set; }
         public WorkFlowStepResult Result { get; set; }
     }
 
@@ -52,10 +50,8 @@ namespace Workflow
         internal WorkFlowEngine engine;
         internal WorkFlow Run(Func<WorkFlowStep, WorkFlowStepResultValues> process)
         {
-            state = new WorkFlowStep() { func = process, Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
-            state.func = process;
+            state = new WorkFlowStep() { Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
             state.Id = process.Method.Name + process.Method.Attributes.ToString();
-            state.Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted);
             try
             {
                 state.Result.ResultCode = process(state);
@@ -71,10 +67,8 @@ namespace Workflow
 
         internal WorkFlow Run(Action<WorkFlowStep> process)
         {
-            state = new WorkFlowStep() { act = process, Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
-            state.act = process;
+            state = new WorkFlowStep() { Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
             state.Id = process.Method.Name + process.Method.Attributes.ToString();
-            state.Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted);
             try
             {
                 process(state);
@@ -217,10 +211,8 @@ namespace Workflow
         internal WorkFlowEngine engine;
         internal WorkFlow Run(Func<WorkFlowStep, WorkFlowStepResultValues> process)
         {
-            WorkFlowStep state = new WorkFlowStep() { func = process, Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
-            state.func = process;
+            WorkFlowStep state = new WorkFlowStep() { Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
             state.Id = process.Method.Name + process.Method.Attributes.ToString();
-            state.Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted);
             try
             {
                 state.Result.ResultCode = process(state);
@@ -236,10 +228,8 @@ namespace Workflow
 
         internal WorkFlow Run(Action<WorkFlowStep> process)
         {
-            WorkFlowStep state = new WorkFlowStep() { act = process, Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
-            state.act = process;
+            WorkFlowStep state = new WorkFlowStep() { Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted) };
             state.Id = process.Method.Name + process.Method.Attributes.ToString();
-            state.Result = new WorkFlowStepResult(WorkFlowStepResultValues.NotExecuted);
             try
             {
                 process(state);

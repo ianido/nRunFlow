@@ -29,113 +29,57 @@ namespace nWorkFlow.Test
         {
             var eng = new WorkFlowEngine();
             countGood = 0; countBad = 0;
-            eng.Start((a) =>
-            {
-                GoodStep(a);
-            })
-                .ContinueWith((a) =>
-                {
-                    GoodStep(a);
-                })
-                .ContinueWith((a) =>
-                {
-                    GoodStep(a);
-                })
-                .ContinueWith((a) =>
-                {
-                    GoodStep(a);
-                    eng.Start((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .IfSuccess((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    });
 
-                    eng.Start((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    });
+            var w = eng.Start(a => GoodStep(a))
+                .ContinueWith(a => GoodStep(a))
+                .ContinueWith(a => GoodStep(a));
 
-                    eng.Start((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .IfSuccess((b) =>
-                    {
-                        GoodStep(b);
-                    });
-                })
-                .ContinueWith((a) =>
-                {
-                    GoodStep(a);
-                    eng.Start((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    });
-
-                    eng.Start((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .IfSuccess((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                    .ContinueWith((b) =>
-                    {
-                        GoodStep(b);
-                    });
-
-                    eng.Start((b) =>
-                    {
-                        GoodStep(b);
-                    })
-                        .IfSuccess((b) =>
-                        {
-                            GoodStep(b);
-                        })
-                        .ContinueWith((b) =>
-                        {
-                            GoodStep(b);
-                        })
-                        .ContinueWith((b) =>
-                        {
-                            GoodStep(b);
-                        });
-                });
+            Append(w, eng);
+                
 
             Assert.AreEqual(countGood, eng.Steps.Count);
             Assert.IsTrue(eng.AllWasGood());
+        }
+
+        private void Append(WorkFlow w, WorkFlowEngine eng)
+        {
+            w.ContinueWith(InnerFunction(eng))
+                .ContinueWith(a =>
+                {
+                    GoodStep(a);
+                    eng.Start(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b));
+
+                    eng.Start(b => GoodStep(b))
+                        .IfSuccess(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b));
+
+                    eng.Start(b => GoodStep(b))
+                        .IfSuccess(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b))
+                        .ContinueWith(b => GoodStep(b));
+                });
+        }
+
+        private Action<WorkFlowStep> InnerFunction(WorkFlowEngine eng)
+        {
+            return a =>
+            {
+                GoodStep(a);
+                eng.Start(b => GoodStep(b))
+                    .IfSuccess(b => GoodStep(b))
+                    .ContinueWith(b => GoodStep(b));
+
+                eng.Start(b => GoodStep(b))
+                    .ContinueWith(b => GoodStep(b));
+
+                eng.Start(b => GoodStep(b))
+                    .IfSuccess(b => GoodStep(b));
+            };
         }
 
         [TestMethod]
@@ -143,23 +87,13 @@ namespace nWorkFlow.Test
         {
             var eng = new WorkFlowEngine();
             countGood = 0; countBad = 0;
-            eng.Start((a) =>
-            {
-                GoodStep(a);
-            })
-            .ContinueWith((a) =>
-            {
-                GoodStep(a);
-            })
-            .ContinueWith((a) =>
-            {
-                GoodStep(a);
-            });
 
+            eng.Start(a => GoodStep(a))
+                .ContinueWith(a => GoodStep(a))
+                .ContinueWith(a => GoodStep(a));
 
             Assert.AreEqual(countGood, eng.Steps.Count);
             Assert.IsTrue(eng.AllWasGood());
-
         }
 
         [TestMethod]
@@ -167,19 +101,10 @@ namespace nWorkFlow.Test
         {
             var eng = new WorkFlowEngine();
             countGood = 0; countBad = 0;
-            eng.Start((a) =>
-            {
-                GoodStep(a);
-            })
-            .ContinueWith((a) =>
-            {
-                BadStep(a);
-            })
-            .ContinueWith((a) =>
-            {
-                GoodStep(a);
-            });
 
+            eng.Start(a => GoodStep(a))
+                .ContinueWith(a => BadStep(a))
+                .ContinueWith(a => GoodStep(a));
 
             Assert.AreEqual(countGood + countBad, eng.Steps.Count);
             Assert.AreEqual(countGood, eng.Steps.Count - countBad);
@@ -195,24 +120,10 @@ namespace nWorkFlow.Test
         {
             var eng = new WorkFlowEngine();
             countGood = 0; countBad = 0;
-            eng.Start((a) =>
-            {
-                GoodStep(a);
-            })
-            .ContinueWith((a) =>
-            {
-                BadStep(a);
-            })
-            .IfSuccess((a) =>
-            {
-                // This will never be executed
-                GoodStep(a);
-            })
-            .IfFailed((a) =>
-            {
-                // This will never be executed
-                GoodStep(a);
-            });
+            eng.Start(a => GoodStep(a))
+                .ContinueWith(a => BadStep(a))
+                .IfSuccess(a => GoodStep(a)) // This will never be executed
+                .IfFailed(a => GoodStep(a)); // This will never be executed
 
             Assert.AreEqual(1, countGood);
 
@@ -231,23 +142,15 @@ namespace nWorkFlow.Test
 
             var eng = new WorkFlowEngine();
             countGood = 0; countBad = 0;
-            eng.Start((a) =>
-            {
-                GoodStep(a);
-            })
-            .ContinueWith((a) =>
-            {
-                BadStep(a);
-            })
-            .Where(new TupleList<Func<WorkFlowStep, bool>, Action<WorkFlowStep>>{
-                { (a) => a.Result.ResultCode == WorkFlowStepResultValues.Success, (a) => {
-                    BadStep(a); }},
-                { (a) => a.Result.ResultCode == WorkFlowStepResultValues.Failed, (a) => {
-                    GoodStep(a); }}
-            }).IfAllSuccess((b) =>
-            {
-                GoodStep(b);
-            });
+
+            eng.Start(a => GoodStep(a))
+                .ContinueWith(a => BadStep(a))
+                .Where(new TupleList<Func<WorkFlowStep, bool>, Action<WorkFlowStep>>
+                {
+                    { a => a.Result.ResultCode == WorkFlowStepResultValues.Success, a => BadStep(a) },
+                    { a => a.Result.ResultCode == WorkFlowStepResultValues.Failed, a => GoodStep(a) }
+                })
+                .IfAllSuccess(b => GoodStep(b));
 
             Assert.AreEqual(3, countGood);
             Assert.AreEqual(1, countBad);
