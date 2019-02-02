@@ -36,6 +36,15 @@ namespace Workflow
             Exception = ex;
             Message = mes;
         }
+        public override string ToString()
+        {
+            var result = "";
+            if ((!string.IsNullOrEmpty(Message)))
+                result += Message + "\r\n";
+            if ((Exception != null))
+                result += Exception.ToString() + "\r\n";
+            return result;
+        }
     }
 
     public class WorkFlowStep
@@ -202,6 +211,16 @@ namespace Workflow
         public bool AllWasGood()
         {
             return Steps.All(a => a.Result.ResultCode == WorkFlowStepResultValues.Success);
+        }
+
+        public List<WorkFlowStep> FailedSteps()
+        {
+            return Steps.Where(a => a.Result.ResultCode == WorkFlowStepResultValues.Failed).ToList();
+        }
+
+        public string ErrorList()
+        {
+            return string.Join("\r\n", Steps.Where(a => a.Result.ResultCode == WorkFlowStepResultValues.Failed).Select(e => e.Result.ToString()));
         }
     }
 
