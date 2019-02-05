@@ -55,7 +55,7 @@ eng.Start(s => {
 - Where (condition, action)
 > Continue to execute the <action> if the condition is true       
 - Where (TupleList<condition, action>)
-> Continue to execute the <action> if the paired <condition> is True   
+> Continue to execute the "action" if the paired "condition" is True   
        
 #### About Actions
 Each action may receive the instance of the current step, so each action can change the result of the step, by default if an exception occur in the action and is not catched, the step result is automatically set as Failed.
