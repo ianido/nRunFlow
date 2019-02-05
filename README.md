@@ -1,4 +1,4 @@
-# Mini Running Work Flow Fluent code.
+# Mini Running Work Flow.
 
 nRunFlow is an small utility for implement a simple decision chart, organizing a set of actions that will be executed according to certain conditions. Most common conditions is Fail or Success of a previous action, but this also can be extended.
 
