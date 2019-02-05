@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nWorkFlow", "nWorkFlow\nWorkFlow.csproj", "{F1709039-660F-482D-8922-57CA5C084B81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nRunFlow", "nRunFlow\nRunFlow.csproj", "{F1709039-660F-482D-8922-57CA5C084B81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nWorkFlow.Test", "nWorkFlow.Test\nWorkFlow.Test.csproj", "{001C6655-0F8E-4CC7-9B8D-800874B2A187}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nRunFlow.Test", "nRunFlow.Test\nRunFlow.Test.csproj", "{001C6655-0F8E-4CC7-9B8D-800874B2A187}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

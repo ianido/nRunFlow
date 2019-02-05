@@ -4,21 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Workflow;
+using nRunFlow;
 
-namespace nWorkFlow.Test
+namespace nRunFlow.Test
 {
     [TestClass]
-    public class WorkFlowTests
+    public class FlowTests
     {
         int countGood = 0;
         int countBad = 0;
-        void GoodStep(WorkFlowStep step)
+        void GoodStep(FlowStep step)
         {
             countGood++;
         }
 
-        void BadStep(WorkFlowStep step)
+        void BadStep(FlowStep step)
         {
             countBad++;
             throw new ApplicationException("Bad things happen");
@@ -27,7 +27,7 @@ namespace nWorkFlow.Test
         [TestMethod]
         public void TestRealFlow()
         {
-            var eng = new WorkFlowEngine();
+            var eng = new FlowEngine();
             countGood = 0; countBad = 0;
 
             eng.Start(a => GoodStep(a))
@@ -73,7 +73,7 @@ namespace nWorkFlow.Test
         [TestMethod]
         public void TestSimpleFlow()
         {
-            var eng = new WorkFlowEngine();
+            var eng = new FlowEngine();
             countGood = 0; countBad = 0;
 
             eng.Start(a => GoodStep(a))
@@ -87,7 +87,7 @@ namespace nWorkFlow.Test
         [TestMethod]
         public void TestCountBad()
         {
-            var eng = new WorkFlowEngine();
+            var eng = new FlowEngine();
             countGood = 0; countBad = 0;
 
             eng.Start(a => GoodStep(a))
@@ -106,7 +106,7 @@ namespace nWorkFlow.Test
         [TestMethod]
         public void TestSimpleCondition()
         {
-            var eng = new WorkFlowEngine();
+            var eng = new FlowEngine();
             countGood = 0; countBad = 0;
             eng.Start(a => GoodStep(a))
                 .ContinueWith(a => BadStep(a))
@@ -128,15 +128,15 @@ namespace nWorkFlow.Test
         public void TestSimpleFork()
         {
 
-            var eng = new WorkFlowEngine();
+            var eng = new FlowEngine();
             countGood = 0; countBad = 0;
 
             eng.Start(a => GoodStep(a))
                 .ContinueWith(a => BadStep(a))
-                .Where(new TupleList<Func<WorkFlowStep, bool>, Action<WorkFlowStep>>
+                .Where(new TupleList<Func<FlowStep, bool>, Action<FlowStep>>
                 {
-                    { a => a.Result.ResultCode == WorkFlowStepResultValues.Success, a => BadStep(a) },
-                    { a => a.Result.ResultCode == WorkFlowStepResultValues.Failed, a => GoodStep(a) }
+                    { a => a.Result.ResultCode == FlowStepResultValues.Success, a => BadStep(a) },
+                    { a => a.Result.ResultCode == FlowStepResultValues.Failed, a => GoodStep(a) }
                 })
                 .IfAllSuccess(b => GoodStep(b));
 
