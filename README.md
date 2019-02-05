@@ -24,19 +24,19 @@ nRunFlow is an small utility for implement a desition tree, organizing a set of 
 var eng = new FlowEngine();
 
 eng.Start(s => {
-			SetupVariables();
-	 })
-	 .ContinueWith(s => {               // Continue Always; Fail or Success the prev step.
-			CheckServiceStatus();
-	 })
-	.ContinueIf(s => {
-			PopulateDependencies();  // If Success Action
-	}, s => {
-			AlternativeRoute();            // Else Action (Fail/Warning/NonExecuted)
-	})
-	.IfSuccess(s => {                        // If Success Action
-			ProcessData();
-	})
+       SetupVariables();
+   })
+   .ContinueWith(s => {         // Continue Always; Fail or Success the prev step.
+       CheckServiceStatus();
+   })
+   .ContinueIf(s => {
+       PopulateDependencies();  // If Success Action
+   }, s => {
+       AlternativeRoute();      // Else Action (Fail/Warning/NonExecuted)
+   })
+   .IfSuccess(s => {            // If Success Action
+       ProcessData();
+   })
 ```
 
 ### Links
