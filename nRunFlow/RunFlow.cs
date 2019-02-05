@@ -81,7 +81,8 @@ namespace nRunFlow
             try
             {
                 process(state);
-                state.Result.ResultCode = FlowStepResultValues.Success;
+                if (state.Result.ResultCode == FlowStepResultValues.NotExecuted)
+                    state.Result.ResultCode = FlowStepResultValues.Success;
             }
             catch (Exception ex)
             {
@@ -95,6 +96,15 @@ namespace nRunFlow
         public Flow ContinueWith(Action<FlowStep> process)
         {
             return Run(process);
+        }
+
+        public Flow ContinueIf(Action<FlowStep> processIfSuccess, Action<FlowStep> processElse = null)
+        {
+            if (state.Result.ResultCode == FlowStepResultValues.Success && processIfSuccess != null)
+                return Run(processIfSuccess);
+            if (processElse != null)
+                return Run(processElse);
+            return new Flow(this.engine, new FlowStep() { Result = new FlowStepResult(FlowStepResultValues.NotExecuted) });
         }
 
         public FlowFork Where(TupleList<Func<FlowStep, bool>, Action<FlowStep>> conditionPairs)

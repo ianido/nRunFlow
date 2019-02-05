@@ -150,5 +150,46 @@ namespace nRunFlow.Test
             Assert.IsFalse(eng.AllWasGood());
             Assert.IsTrue(eng.SomethingWasWrong());
         }
+
+        [TestMethod]
+        public void TestSubFlowAffectingResultOfMainFlow()
+        {
+            var eng = new FlowEngine();
+            countGood = 0; countBad = 0;
+            eng.Start((a) =>
+            {
+                GoodStep(a);
+            })
+                .IfSuccess((a) =>
+                {
+                    var seng = new FlowEngine();
+                    GoodStep(a);
+                    seng.Start((b) =>
+                    {
+                        BadStep(b);
+                    })
+                    .ContinueWith((b) =>
+                    {
+                        GoodStep(b);
+                    })
+                    .ContinueWith((b) =>
+                    {
+                        GoodStep(b);
+                    });
+                    if (!seng.AllWasGood())
+                    {
+                        a.Result.ResultCode = FlowStepResultValues.Failed; //I am affecting the result of the task
+                    }
+                })
+                .IfSuccess((a) =>
+                {
+                    GoodStep(a);
+                });
+
+            Assert.IsFalse(eng.AllWasGood());
+            Assert.AreEqual(countGood, 4);
+            Assert.AreEqual(countBad, 1);
+
+        }
     }
 }
